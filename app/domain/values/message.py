@@ -8,11 +8,11 @@ from domain.exceptions.messages import TitleTooLongException, EmptyTextException
 class Text(BaseValueObject):
     value: str
 
-    def validate(self):
+    def validate(self) -> None:
         if not self.value:
             raise EmptyTextException()
 
-    def as_generic_type(self):
+    def as_generic_type(self) -> str:
         return str(self.value)
 
 
@@ -20,11 +20,11 @@ class Text(BaseValueObject):
 class Title(BaseValueObject):
     value: str
 
-    def validate(self):
+    def validate(self) -> None:
         if not self.value:
             raise EmptyTextException()
         if len(self.value) > 255:
             raise TitleTooLongException(self.value)
 
-    def as_generic_type(self):
+    def as_generic_type(self) -> str:
         return str(self.value)

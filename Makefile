@@ -21,3 +21,6 @@ app-shell:
 app-logs:
 	$(LOGS) $(APP_CONTAINER) -f
 
+.PHONY : app-tests
+app-tests:
+	$(EXEC) $(APP_CONTAINER) pytest
