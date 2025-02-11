@@ -11,6 +11,5 @@ ER = TypeVar('ER', bound=Any)
 @dataclass
 class EventHandler(ABC, Generic[ET, ER]):
 
-
     def handle(self, event: ET) -> ER:
         ...
