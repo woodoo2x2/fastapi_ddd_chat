@@ -10,19 +10,19 @@ from logic.exceptions.mediator import EventHandlerNotRegisteredException, Comman
 
 @dataclass(eq=False)
 class Mediator:
-    event_map: dict[type[ET], EventHandler] = field(
+    event_map: dict[ET, list[EventHandler]] = field(
         default_factory=lambda: defaultdict(list),
         kw_only=True
     )
-    command_map: dict[type[CT], CommandHandler] = field(
+    command_map: dict[CT, list[CommandHandler]] = field(
         default_factory=lambda: defaultdict(list),
         kw_only=True
     )
 
-    def register_event(self, event: ET, event_handler: Iterable[EventHandler[ET, ER]]):
+    def register_event(self, event: ET, event_handler: [EventHandler[ET, ER]]):
         self.event_map[event].append(event_handler)
 
-    def register_command(self, command: CT, command_handler: EventHandler[CT,CR]):
+    def register_command(self, command: CT, command_handler: [EventHandler[CT, CR]]):
         self.command_map[command].extend(command_handler)
 
     async def handle_event(self, event: BaseEvent) -> list[ER]:
@@ -41,8 +41,6 @@ class Mediator:
         if not handlers:
             raise CommandHandlerNotRegisteredException(event_type)
 
-        print(f"Handling CreateChatCommand: {command}")
         result = [await handler.handle(command) for handler in handlers]
-        print(f"Result: {result}")
-        return result
 
+        return result

@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from wsgiref.handlers import BaseHandler
 
 from domain.entities.messages import Chat
 from domain.values.message import Title
@@ -12,7 +13,7 @@ class CreateChatCommand(BaseCommand):
     title: str
 
 @dataclass(frozen=True)
-class CreateChatCommandHandler:
+class CreateChatCommandHandler(CommandHandler):
     chat_repository: BaseChatRepository
 
     async def handle(self, command: CreateChatCommand) -> Chat:
