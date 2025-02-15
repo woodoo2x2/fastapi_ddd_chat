@@ -1,5 +1,4 @@
 from datetime import datetime
-from optparse import TitledHelpFormatter
 
 import pytest
 
@@ -36,7 +35,8 @@ def test_create_chat_success():
 
 def test_create_chat_title_too_long():
     with pytest.raises(TitleTooLongException):
-        Title('Test title'*100)
+        Title('Test title' * 100)
+
 
 def test_add_message_to_chat():
     text = Text('a' * 400)
@@ -70,4 +70,3 @@ def test_new_message_events():
     assert new_event.message_oid == message.oid
     assert new_event.message_text == message.text.as_generic_type()
     assert new_event.chat_oid == chat.oid
-

@@ -1,9 +1,8 @@
 from dataclasses import dataclass
-from wsgiref.handlers import BaseHandler
 
 from domain.entities.messages import Chat
 from domain.values.message import Title
-from infrastructure.repositories.messages import BaseChatRepository
+from infrastructure.repositories.messages.base import BaseChatRepository
 from logic.commands.base import BaseCommand, CommandHandler
 from logic.exceptions.messages import ChatWithThatTitleAlreadyExistsException
 
@@ -11,6 +10,7 @@ from logic.exceptions.messages import ChatWithThatTitleAlreadyExistsException
 @dataclass(frozen=True)
 class CreateChatCommand(BaseCommand):
     title: str
+
 
 @dataclass(frozen=True)
 class CreateChatCommandHandler(CommandHandler):
@@ -27,5 +27,3 @@ class CreateChatCommandHandler(CommandHandler):
         await self.chat_repository.add_chat(new_chat)
 
         return new_chat
-
-

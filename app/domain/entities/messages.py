@@ -8,10 +8,6 @@ from domain.values.message import Text, Title
 
 @dataclass
 class Message(BaseEntity):
-    created_at: datetime = field(
-        default_factory=datetime.now,
-        kw_only=True,
-    )
     text: Text
 
     def __hash__(self) -> int:
