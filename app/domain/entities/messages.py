@@ -19,7 +19,7 @@ class Message(BaseEntity):
 
 @dataclass
 class Chat(BaseEntity):
-    messages: set[Message] = field(
+    messages: list[Message] = field(
         default_factory=set,
         kw_only=True,
     )
@@ -42,7 +42,7 @@ class Chat(BaseEntity):
         return self.oid == value.oid
 
     def add_message(self, message: Message):
-        self.messages.add(message)
+        self.messages.append(message)
         self.register_event(NewMessageReceivedEvent(
             message_text=message.text.as_generic_type(),
             message_oid=message.oid,
