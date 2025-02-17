@@ -3,7 +3,7 @@ from functools import lru_cache
 from motor.motor_asyncio import AsyncIOMotorClient
 from punq import Container, Scope
 
-from infrastructure.repositories.messages.base import BaseChatRepository
+from infrastructure.repositories.messages.base import BaseChatRepository, BaseMessageRepository
 from infrastructure.repositories.messages.mongo import MongoDBChatRepository, MongoDBMessageRepository
 from logic.commands.messages import CreateChatCommand, CreateChatCommandHandler, CreateMessageCommand, \
     CreateMessageCommandHandler
@@ -47,10 +47,11 @@ def _init_container() -> Container:
         )
 
     container.register(BaseChatRepository, factory=init_chat_mongo_db_repository, scope=Scope.singleton)
-    container.register(MongoDBMessageRepository, factory=init_message_mongo_db_repository, scope=Scope.singleton)
+    container.register(BaseMessageRepository, factory=init_message_mongo_db_repository, scope=Scope.singleton)
 
-    container.register(CreateMessageCommandHandler)
+
     container.register(CreateChatCommandHandler)
+    container.register(CreateMessageCommandHandler)
 
     def init_mediator() -> Mediator:
         mediator = Mediator()

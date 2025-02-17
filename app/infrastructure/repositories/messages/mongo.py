@@ -52,7 +52,7 @@ class MongoDBMessageRepository(BaseMessageRepository, BaseMongoDBRepository):
 
     async def add_message(self, chat_oid: str, message: Message) -> None:
         collections = self._collection
-        await collections.update_one(
+        message = await collections.update_one(
             filter={"chat_oid": chat_oid},
             update={
                 '$push': {
@@ -60,3 +60,4 @@ class MongoDBMessageRepository(BaseMessageRepository, BaseMongoDBRepository):
                 }
             }
         )
+

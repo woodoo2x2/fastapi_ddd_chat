@@ -36,7 +36,7 @@ class CreateMessageCommand(BaseCommand):
 
 
 @dataclass(frozen=True)
-class CreateMessageCommandHandler(CommandHandler):
+class CreateMessageCommandHandler(CommandHandler[CreateMessageCommand, Message]):
     chat_repository: BaseChatRepository
     message_repository: BaseMessageRepository
 
@@ -48,4 +48,5 @@ class CreateMessageCommandHandler(CommandHandler):
 
         message = Message(text=Text(value=command.text))
         chat.add_message(message)
-        return await self.message_repository.add_message(chat_oid=command.chat_oid, message=message)
+        await self.message_repository.add_message(chat_oid=command.chat_oid, message=message)
+        return message

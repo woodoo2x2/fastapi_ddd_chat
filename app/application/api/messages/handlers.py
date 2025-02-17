@@ -6,7 +6,7 @@ from application.api.messages.schemas import CreateChatRequestSchema, CreateChat
     CreateMessageRequestSchema, CreateMessageResponseSchema
 from application.api.schemas import ErrorSchema
 from domain.exceptions.base import ApplicationException
-from logic.commands.messages import CreateChatCommand, CreateMessageCommand
+from logic.commands.messages import CreateChatCommand, CreateMessageCommand, CreateMessageCommandHandler
 from logic.dependency import init_container
 from logic.mediator import Mediator
 
@@ -51,7 +51,8 @@ async def create_message_handler(
     mediator: Mediator = container.resolve(Mediator)
 
     try:
-        message = await mediator.handle_command(CreateMessageCommand(text=data.text, chat_oid=chat_oid))
+        message, *_ = await mediator.handle_command(CreateMessageCommand(text=data.text, chat_oid=chat_oid))
     except ApplicationException as exception:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail={'error': exception.message})
+
     return CreateMessageResponseSchema.from_entity(message)
