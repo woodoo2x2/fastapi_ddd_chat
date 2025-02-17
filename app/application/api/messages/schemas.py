@@ -55,11 +55,11 @@ class ChatDetailResponseSchema(BaseModel):
     def from_entity(cls, chat: Chat) -> 'ChatDetailResponseSchema':
         return ChatDetailResponseSchema(
             oid=chat.oid,
-            title=chat.title,
+            title=chat.title.as_generic_type(),
             created_at=chat.created_at,
             messages=[MessageDetailSchema(
                 oid=message.oid,
-                text=message.text,
+                text=message.text.as_generic_type(),
                 created_at=message.created_at,
             ) for message in chat.messages]
         )
