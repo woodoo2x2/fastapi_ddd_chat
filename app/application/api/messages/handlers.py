@@ -3,12 +3,14 @@ from punq import Container
 from starlette import status
 
 from application.api.messages.schemas import CreateChatRequestSchema, CreateChatResponseSchema, \
-    CreateMessageRequestSchema, CreateMessageResponseSchema
+    CreateMessageRequestSchema, CreateMessageResponseSchema, ChatDetailResponseSchema
 from application.api.schemas import ErrorSchema
+from domain.entities.messages import Chat
 from domain.exceptions.base import ApplicationException
-from logic.commands.messages import CreateChatCommand, CreateMessageCommand, CreateMessageCommandHandler
+from logic.commands.messages import CreateChatCommand, CreateMessageCommand
 from logic.dependency import init_container
 from logic.mediator import Mediator
+from logic.queries.messages import GetChatDetailQuery
 
 router = APIRouter(
     prefix="/chat",
@@ -56,3 +58,25 @@ async def create_message_handler(
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail={'error': exception.message})
 
     return CreateMessageResponseSchema.from_entity(message)
+
+
+@router.get('/{chat_oid}/',
+            status_code=status.HTTP_200_OK,
+            description='Get chat and all chat messages',
+            responses={
+                status.HTTP_200_OK: {'model': ChatDetailResponseSchema},
+                status.HTTP_400_BAD_REQUEST: {'model': ErrorSchema},
+            })
+async def get_chat_with_messages_handler(
+        chat_oid: str,
+        container: Container = Depends(init_container),
+) -> ChatDetailResponseSchema:
+    """Get chat and all chat messages"""
+    mediator: Mediator = container.resolve(Mediator)
+    try:
+        chat: Chat = await mediator.handle_query(GetChatDetailQuery(chat_oid=chat_oid))
+    except ApplicationException as exception:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail={'error': exception.message})
+
+    return ChatDetailResponseSchema.from_entity(chat)
+

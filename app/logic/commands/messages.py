@@ -48,5 +48,6 @@ class CreateMessageCommandHandler(CommandHandler[CreateMessageCommand, Message])
 
         message = Message(text=Text(value=command.text))
         chat.add_message(message)
-        await self.message_repository.add_message(chat_oid=command.chat_oid, message=message)
+        a = await self.message_repository.add_message(chat_oid=command.chat_oid, message=message)
+        print(a)
         return message

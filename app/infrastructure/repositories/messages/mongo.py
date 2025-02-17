@@ -51,13 +51,15 @@ class MongoDBChatRepository(BaseChatRepository, BaseMongoDBRepository):
 class MongoDBMessageRepository(BaseMessageRepository, BaseMongoDBRepository):
 
     async def add_message(self, chat_oid: str, message: Message) -> None:
-        collections = self._collection
-        message = await collections.update_one(
-            filter={"chat_oid": chat_oid},
-            update={
-                '$push': {
-                    'messages': convert_message_entity_to_document(message),
+        collection = self._collection
+
+        await collection.update_one(
+            {"chat_oid": chat_oid},  # Убедимся, что фильтр правильный
+            {
+                "$push": {
+                    "messages": convert_message_entity_to_document(message)
                 }
             }
         )
+
 

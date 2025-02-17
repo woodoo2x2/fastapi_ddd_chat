@@ -14,7 +14,7 @@ def convert_message_document_to_entity(message_document: Mapping[str, Any]) -> M
     return Message(
         text=message_document['text'],
         oid=message_document['oid'],
-        created_at=message_document['created_at'],
+
     )
 
 
