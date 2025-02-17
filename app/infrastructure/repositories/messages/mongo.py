@@ -54,12 +54,10 @@ class MongoDBMessageRepository(BaseMessageRepository, BaseMongoDBRepository):
         collection = self._collection
 
         await collection.update_one(
-            {"chat_oid": chat_oid},  # Убедимся, что фильтр правильный
+            {"oid": chat_oid},  # Убедимся, что фильтр правильный
             {
                 "$push": {
                     "messages": convert_message_entity_to_document(message)
                 }
             }
         )
-
-
