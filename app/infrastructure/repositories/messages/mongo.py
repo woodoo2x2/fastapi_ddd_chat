@@ -4,9 +4,15 @@ from dataclasses import dataclass
 from motor.core import AgnosticClient
 
 from domain.entities.messages import Chat, Message
-from infrastructure.repositories.messages.base import BaseChatRepository, BaseMessageRepository
-from infrastructure.repositories.messages.converters import convert_chat_entity_to_document, \
-    convert_message_entity_to_document, convert_chat_document_to_entity
+from infrastructure.repositories.messages.base import (
+    BaseChatRepository,
+    BaseMessageRepository,
+)
+from infrastructure.repositories.messages.converters import (
+    convert_chat_entity_to_document,
+    convert_chat_document_to_entity,
+    convert_message_entity_to_document,
+)
 
 
 @dataclass
@@ -17,12 +23,13 @@ class BaseMongoDBRepository(ABC):
 
     @property
     def _collection(self):
-        return self.mongo_db_client[self.mongo_db_db_name][self.mongo_db_collection_name]
+        return self.mongo_db_client[self.mongo_db_db_name][
+            self.mongo_db_collection_name
+        ]
 
 
 @dataclass
 class MongoDBChatRepository(BaseChatRepository, BaseMongoDBRepository):
-
     async def get_chat_by_oid(self, oid: str) -> Chat | None:
         collection = self._collection
         chat_document = await collection.find_one(
@@ -49,15 +56,9 @@ class MongoDBChatRepository(BaseChatRepository, BaseMongoDBRepository):
 
 @dataclass
 class MongoDBMessageRepository(BaseMessageRepository, BaseMongoDBRepository):
-
     async def add_message(self, chat_oid: str, message: Message) -> None:
         collection = self._collection
 
-        await collection.update_one(
-            {"oid": chat_oid},  # Убедимся, что фильтр правильный
-            {
-                "$push": {
-                    "messages": convert_message_entity_to_document(message)
-                }
-            }
+        await collection.insert_one(
+            document=convert_message_entity_to_document(message)
         )

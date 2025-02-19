@@ -2,7 +2,10 @@ from dataclasses import dataclass
 from typing import Generic
 
 from domain.entities.messages import Chat
-from infrastructure.repositories.messages.base import BaseChatRepository, BaseMessageRepository
+from infrastructure.repositories.messages.base import (
+    BaseChatRepository,
+    BaseMessageRepository,
+)
 from logic.exceptions.messages import ChatWithThatOidNotFoundException
 from logic.queries.base import BaseQuery, BaseQueryHandler, QT, QR
 

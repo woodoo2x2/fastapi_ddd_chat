@@ -1,3 +1,4 @@
+import uuid
 from datetime import datetime
 
 import pytest
@@ -9,23 +10,23 @@ from domain.values.message import Text, Title
 
 
 def test_create_short_message_success():
-    text = Text('Test success')
-    message = Message(text=text)
+    text = Text("Test success")
+    message = Message(text=text, chat_oid = str(uuid.uuid4()))
 
     assert message.text == text
     assert message.created_at.date() == datetime.today().date()
 
 
 def test_create_long_message_success():
-    text = Text('a' * 400)
-    message = Message(text=text)
+    text = Text("a" * 400)
+    message = Message(text=text, chat_oid = str(uuid.uuid4()))
 
     assert message.text == text
     assert message.created_at.date() == datetime.today().date()
 
 
 def test_create_chat_success():
-    title = Title('Test title')
+    title = Title("Test title")
     chat = Chat(title=title)
 
     assert chat.title == title
@@ -35,14 +36,14 @@ def test_create_chat_success():
 
 def test_create_chat_title_too_long():
     with pytest.raises(TitleTooLongException):
-        Title('Test title' * 100)
+        Title("Test title" * 100)
 
 
 def test_add_message_to_chat():
-    text = Text('a' * 400)
-    message = Message(text=text)
+    text = Text("a" * 400)
+    message = Message(text=text, chat_oid = str(uuid.uuid4()))
 
-    title = Title('Test title')
+    title = Title("Test title")
     chat = Chat(title=title)
 
     chat.add_message(message)
@@ -51,10 +52,10 @@ def test_add_message_to_chat():
 
 
 def test_new_message_events():
-    text = Text('Test text')
-    message = Message(text=text)
+    text = Text("Test text")
+    message = Message(text=text, chat_oid = str(uuid.uuid4()))
 
-    title = Title('Test title')
+    title = Title("Test title")
     chat = Chat(title=title)
 
     chat.add_message(message)

@@ -9,6 +9,7 @@ class NewMessageReceivedEvent(BaseEvent):
     message_oid: str
     chat_oid: str
 
+
 @dataclass
 class NewChatCreatedEvent(BaseEvent):
     chat_oid: str

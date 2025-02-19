@@ -14,11 +14,12 @@ class BaseCommand(ABC):
     Атрибуты:
         (нет, но дочерние классы должны определять свои атрибуты)
     """
+
     ...
 
 
-CT = TypeVar('CT', bound=BaseCommand)
-CR = TypeVar('CR', bound=Any)
+CT = TypeVar("CT", bound=BaseCommand)
+CR = TypeVar("CR", bound=Any)
 
 
 @dataclass(frozen=True)
@@ -40,5 +41,4 @@ class CommandHandler(ABC, Generic[CT, CR]):
     """
 
     @abstractmethod
-    def handle(self, command: CT) -> CR:
-        ...
+    def handle(self, command: CT) -> CR: ...

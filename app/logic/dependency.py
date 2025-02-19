@@ -3,10 +3,20 @@ from functools import lru_cache
 from motor.motor_asyncio import AsyncIOMotorClient
 from punq import Container, Scope
 
-from infrastructure.repositories.messages.base import BaseChatRepository, BaseMessageRepository
-from infrastructure.repositories.messages.mongo import MongoDBChatRepository, MongoDBMessageRepository
-from logic.commands.messages import CreateChatCommand, CreateChatCommandHandler, CreateMessageCommand, \
-    CreateMessageCommandHandler
+from infrastructure.repositories.messages.base import (
+    BaseChatRepository,
+    BaseMessageRepository,
+)
+from infrastructure.repositories.messages.mongo import (
+    MongoDBChatRepository,
+    MongoDBMessageRepository,
+)
+from logic.commands.messages import (
+    CreateChatCommand,
+    CreateChatCommandHandler,
+    CreateMessageCommand,
+    CreateMessageCommandHandler,
+)
 from logic.mediator import Mediator
 from logic.queries.messages import GetChatDetailQuery, GetChatDetailQueryHandler
 from settings.config import Settings
@@ -23,12 +33,12 @@ def _init_container() -> Container:
     container.register(Settings, instance=Settings(), scope=Scope.singleton)
     settings: Settings = container.resolve(Settings)
 
-
     def create_mongo_db_client() -> AsyncIOMotorClient:
-        return AsyncIOMotorClient(settings.MONGO_DB_PATH,
-                                  serverSelectionTimeoutMS=3000)
+        return AsyncIOMotorClient(settings.MONGO_DB_PATH, serverSelectionTimeoutMS=3000)
 
-    container.register(AsyncIOMotorClient, factory=create_mongo_db_client, scope=Scope.singleton)
+    container.register(
+        AsyncIOMotorClient, factory=create_mongo_db_client, scope=Scope.singleton
+    )
     client = container.resolve(AsyncIOMotorClient)
 
     def init_chat_mongo_db_repository() -> MongoDBChatRepository:
@@ -36,20 +46,23 @@ def _init_container() -> Container:
             mongo_db_client=client,
             mongo_db_db_name=settings.MONGO_DB_DATABASE_NAME,
             mongo_db_collection_name=settings.MONGO_DB_CHAT_COLLECTION_NAME,
-
         )
 
     def init_message_mongo_db_repository() -> MongoDBMessageRepository:
         return MongoDBMessageRepository(
             mongo_db_client=client,
             mongo_db_db_name=settings.MONGO_DB_DATABASE_NAME,
-            mongo_db_collection_name=settings.MONGO_DB_CHAT_COLLECTION_NAME,
-
+            mongo_db_collection_name=settings.MONGO_DB_MESSAGES_COLLECTION_NAME,
         )
 
-    container.register(BaseChatRepository, factory=init_chat_mongo_db_repository, scope=Scope.singleton)
-    container.register(BaseMessageRepository, factory=init_message_mongo_db_repository, scope=Scope.singleton)
-
+    container.register(
+        BaseChatRepository, factory=init_chat_mongo_db_repository, scope=Scope.singleton
+    )
+    container.register(
+        BaseMessageRepository,
+        factory=init_message_mongo_db_repository,
+        scope=Scope.singleton,
+    )
 
     container.register(CreateChatCommandHandler)
     container.register(CreateMessageCommandHandler)

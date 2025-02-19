@@ -17,7 +17,7 @@ class BaseEntity(ABC):
         default_factory=lambda: str(uuid.uuid4()),
         kw_only=True,
     )
-    _events : list[BaseEvent] = field(default_factory=list, kw_only=True)
+    _events: list[BaseEvent] = field(default_factory=list, kw_only=True)
 
     def pull_events(self) -> list[BaseEvent]:
         register_events = copy(self._events)

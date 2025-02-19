@@ -9,6 +9,3 @@ def init_dummy_container() -> Container:
     container = _init_container()
     container.register(BaseChatRepository, MemoryChatRepository, scope=Scope.singleton)
     return container
-
-
-

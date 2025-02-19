@@ -10,23 +10,24 @@ from logic.exceptions.messages import ChatWithThatTitleAlreadyExistsException
 from logic.mediator import Mediator
 
 
-
 @pytest.mark.asyncio
 async def test_create_chat_command_success(
-        mediator: Mediator,
-        chat_repository: BaseChatRepository,
-        faker: Faker,
+    mediator: Mediator,
+    chat_repository: BaseChatRepository,
+    faker: Faker,
 ):
-
     chat, *_ = await mediator.handle_command(CreateChatCommand(title=faker.text()))
 
-    assert await chat_repository.check_chat_exists_by_title(title=chat.title.as_generic_type())
+    assert await chat_repository.check_chat_exists_by_title(
+        title=chat.title.as_generic_type()
+    )
+
 
 @pytest.mark.asyncio
 async def test_create_chat_command_title_already_exists(
-        mediator: Mediator,
-        chat_repository: BaseChatRepository,
-        faker: Faker,
+    mediator: Mediator,
+    chat_repository: BaseChatRepository,
+    faker: Faker,
 ):
     title = faker.text()
     chat = Chat(title=Title(title))

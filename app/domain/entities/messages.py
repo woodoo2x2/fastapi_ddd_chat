@@ -8,19 +8,20 @@ from domain.values.message import Text, Title
 
 @dataclass
 class Message(BaseEntity):
+    chat_oid: str
     text: Text
 
     def __hash__(self) -> int:
         return hash(self.oid)
 
-    def __eq__(self, value: 'Message') -> bool:
+    def __eq__(self, value: "Message") -> bool:
         return self.oid == value.oid
 
 
 @dataclass
 class Chat(BaseEntity):
     messages: list[Message] = field(
-        default_factory=set,
+        default_factory=list,
         kw_only=True,
     )
     created_at: datetime = field(
@@ -30,21 +31,27 @@ class Chat(BaseEntity):
     title: Title
 
     @classmethod
-    def create_chat(cls, title: Title) -> 'Chat':
+    def create_chat(cls, title: Title) -> "Chat":
         new_chat = cls(title=title)
-        new_chat.register_event(NewChatCreatedEvent(chat_oid=new_chat.oid, chat_title=new_chat.title.as_generic_type()))
+        new_chat.register_event(
+            NewChatCreatedEvent(
+                chat_oid=new_chat.oid, chat_title=new_chat.title.as_generic_type()
+            )
+        )
         return new_chat
 
     def __hash__(self) -> int:
         return hash(self.oid)
 
-    def __eq__(self, value: 'Message') -> bool:
+    def __eq__(self, value: "Message") -> bool:
         return self.oid == value.oid
 
     def add_message(self, message: Message):
         self.messages.append(message)
-        self.register_event(NewMessageReceivedEvent(
-            message_text=message.text.as_generic_type(),
-            message_oid=message.oid,
-            chat_oid=self.oid,
-        ))
+        self.register_event(
+            NewMessageReceivedEvent(
+                message_text=message.text.as_generic_type(),
+                message_oid=message.oid,
+                chat_oid=self.oid,
+            )
+        )

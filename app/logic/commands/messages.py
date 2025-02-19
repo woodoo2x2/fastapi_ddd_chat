@@ -2,9 +2,15 @@ from dataclasses import dataclass
 
 from domain.entities.messages import Chat, Message
 from domain.values.message import Title, Text
-from infrastructure.repositories.messages.base import BaseChatRepository, BaseMessageRepository
+from infrastructure.repositories.messages.base import (
+    BaseChatRepository,
+    BaseMessageRepository,
+)
 from logic.commands.base import BaseCommand, CommandHandler
-from logic.exceptions.messages import ChatWithThatTitleAlreadyExistsException, ChatWithThatOidNotFoundException
+from logic.exceptions.messages import (
+    ChatWithThatTitleAlreadyExistsException,
+    ChatWithThatOidNotFoundException,
+)
 
 
 @dataclass(frozen=True)
@@ -48,6 +54,8 @@ class CreateMessageCommandHandler(CommandHandler[CreateMessageCommand, Message])
 
         message = Message(text=Text(value=command.text))
         chat.add_message(message)
-        a = await self.message_repository.add_message(chat_oid=command.chat_oid, message=message)
+        a = await self.message_repository.add_message(
+            chat_oid=command.chat_oid, message=message
+        )
         print(a)
         return message

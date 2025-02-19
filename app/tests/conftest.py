@@ -12,9 +12,10 @@ def container() -> Container:
 
 
 @fixture
-def mediator(container:Container) -> Mediator:
+def mediator(container: Container) -> Mediator:
     return container.resolve(Mediator)
 
+
 @fixture
-def chat_repository(container:Container) -> BaseChatRepository:
+def chat_repository(container: Container) -> BaseChatRepository:
     return container.resolve(BaseChatRepository)

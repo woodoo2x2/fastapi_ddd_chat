@@ -5,29 +5,31 @@ from typing import Iterable, Type
 from domain.events.base import BaseEvent
 from logic.commands.base import CommandHandler, CT, CR, BaseCommand
 from logic.events.base import EventHandler, ET, ER
-from logic.exceptions.mediator import EventHandlerNotRegisteredException, CommandHandlerNotRegisteredException
+from logic.exceptions.mediator import (
+    EventHandlerNotRegisteredException,
+    CommandHandlerNotRegisteredException,
+)
 from logic.queries.base import BaseQuery, BaseQueryHandler, QT, QR
 
 
 @dataclass(eq=False)
 class Mediator:
     event_map: dict[ET, list[EventHandler]] = field(
-        default_factory=lambda: defaultdict(list),
-        kw_only=True
+        default_factory=lambda: defaultdict(list), kw_only=True
     )
     command_map: dict[CT, list[CommandHandler]] = field(
-        default_factory=lambda: defaultdict(list),
-        kw_only=True
+        default_factory=lambda: defaultdict(list), kw_only=True
     )
-    query_map : dict[QT, BaseQueryHandler] = field(
-        default_factory=lambda: {},
-        kw_only=True
+    query_map: dict[QT, BaseQueryHandler] = field(
+        default_factory=lambda: {}, kw_only=True
     )
 
     def register_event(self, event: ET, event_handler: [EventHandler[ET, ER]]):
         self.event_map[event].append(event_handler)
 
-    def register_command(self, command: Type[CT], command_handler: [CommandHandler[CT, CR]]):
+    def register_command(
+        self, command: Type[CT], command_handler: [CommandHandler[CT, CR]]
+    ):
         self.command_map[command].extend(command_handler)
 
     def register_query(self, query: QT, query_handler: BaseQueryHandler[QT, QR]) -> QR:
@@ -54,7 +56,6 @@ class Mediator:
         result = [await handler.handle(command) for handler in handlers]
 
         return result
-
 
     async def handle_query(self, query: BaseQuery) -> QR:
         return await self.query_map[query.__class__].handle(query=query)
