@@ -17,7 +17,7 @@ from domain.entities.messages import Chat
 from domain.exceptions.base import ApplicationException
 from logic.commands.messages import CreateChatCommand, CreateMessageCommand
 from logic.dependency import init_container
-from logic.mediator import Mediator
+from logic.mediator.base import Mediator
 from logic.queries.messages import GetChatDetailQuery, GetMessagesQuery
 
 router = APIRouter(

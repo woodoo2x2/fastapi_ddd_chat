@@ -7,7 +7,7 @@ from infrastructure.repositories.messages.base import BaseChatRepository
 
 from logic.commands.messages import CreateChatCommand
 from logic.exceptions.messages import ChatWithThatTitleAlreadyExistsException
-from logic.mediator import Mediator
+from logic.mediator.base import Mediator
 
 
 @pytest.mark.asyncio
