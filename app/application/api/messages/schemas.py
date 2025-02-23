@@ -48,7 +48,7 @@ class MessageDetailSchema(BaseModel):
         return cls(
             oid=message.oid,
             text=message.text.as_generic_type(),
-            created_at=message.created_at
+            created_at=message.created_at,
         )
 
 

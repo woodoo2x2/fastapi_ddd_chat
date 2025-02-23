@@ -21,7 +21,8 @@ from logic.mediator import Mediator
 from logic.queries.messages import (
     GetChatDetailQuery,
     GetChatDetailQueryHandler,
-    GetMessagesQuery, GetMessagesQueryHandler,
+    GetMessagesQuery,
+    GetMessagesQueryHandler,
 )
 from settings.config import Settings
 

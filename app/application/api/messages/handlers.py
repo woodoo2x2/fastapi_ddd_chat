@@ -8,7 +8,9 @@ from application.api.messages.schemas import (
     CreateChatResponseSchema,
     CreateMessageRequestSchema,
     CreateMessageResponseSchema,
-    ChatDetailResponseSchema, GetMessagesResponseSchema, MessageDetailSchema,
+    ChatDetailResponseSchema,
+    GetMessagesResponseSchema,
+    MessageDetailSchema,
 )
 from application.api.schemas import ErrorSchema
 from domain.entities.messages import Chat
@@ -35,8 +37,8 @@ router = APIRouter(
     },
 )
 async def create_chat_handler(
-        data: CreateChatRequestSchema,
-        container: Container = Depends(init_container),
+    data: CreateChatRequestSchema,
+    container: Container = Depends(init_container),
 ) -> CreateChatResponseSchema:
     """Create chat message"""
     mediator: Mediator = container.resolve(Mediator)
@@ -60,9 +62,9 @@ async def create_chat_handler(
     },
 )
 async def create_message_handler(
-        chat_oid: str,
-        data: CreateMessageRequestSchema,
-        container: Container = Depends(init_container),
+    chat_oid: str,
+    data: CreateMessageRequestSchema,
+    container: Container = Depends(init_container),
 ):
     """Create chat message"""
     mediator: Mediator = container.resolve(Mediator)
@@ -89,8 +91,8 @@ async def create_message_handler(
     },
 )
 async def get_chat_handler(
-        chat_oid: str,
-        container: Container = Depends(init_container),
+    chat_oid: str,
+    container: Container = Depends(init_container),
 ) -> ChatDetailResponseSchema:
     """Get chat and all chat messages"""
     mediator: Mediator = container.resolve(Mediator)
@@ -103,8 +105,6 @@ async def get_chat_handler(
         )
 
 
-
-
 @router.get(
     "/{chat_oid}/messages/",
     status_code=status.HTTP_200_OK,
@@ -115,14 +115,16 @@ async def get_chat_handler(
     },
 )
 async def get_chat_all_messages_handler(
-        chat_oid: str,
-        filters: GetMessagesFiltersSchema = Depends(),
-        container: Container = Depends(init_container),
+    chat_oid: str,
+    filters: GetMessagesFiltersSchema = Depends(),
+    container: Container = Depends(init_container),
 ) -> GetMessagesResponseSchema:
     mediator: Mediator = container.resolve(Mediator)
 
     try:
-        messages, count = await mediator.handle_query(GetMessagesQuery(chat_oid=chat_oid, filters=filters.to_infra()))
+        messages, count = await mediator.handle_query(
+            GetMessagesQuery(chat_oid=chat_oid, filters=filters.to_infra())
+        )
 
     except ApplicationException as exception:
         raise HTTPException(
@@ -132,5 +134,5 @@ async def get_chat_all_messages_handler(
         count=count,
         limit=filters.limit,
         offset=filters.offset,
-        items = [MessageDetailSchema.from_entity(message) for message in messages],
+        items=[MessageDetailSchema.from_entity(message) for message in messages],
     )

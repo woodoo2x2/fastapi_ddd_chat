@@ -5,10 +5,16 @@ ENV = --env-file .env
 APP_FILE = docker_compose/app.yaml
 APP_CONTAINER = main-app
 STORAGE_FILE = docker_compose/storages.yaml
+MESSAGE_FILE = docker_compose/kafka.yaml
+
 
 .PHONY : app
 app:
 	$(DC) -f $(APP_FILE) $(ENV) up --build -d
+
+.PHONY : messaging
+messaging:
+	$(DC) -f $(MESSAGE_FILE) $(ENV) up --build -d
 
 .PHONY : storages
 storages:
@@ -16,9 +22,11 @@ storages:
 
 .PHONY : all
 all:
-	$(DC) -f $(APP_FILE) -f $(STORAGE_FILE) $(ENV) up --build -d
+	$(DC) -f $(APP_FILE) -f $(STORAGE_FILE)  -f $(MESSAGE_FILE) $(ENV) up --build -d
 
-
+.PHONY : messaging-down
+messaging-down:
+	$(DC) -f $(MESSAGE_FILE) down
 .PHONY: app-down
 app-down:
 	$(DC) -f $(APP_FILE) down
@@ -35,6 +43,14 @@ app-shell:
 app-logs:
 	$(LOGS) $(APP_CONTAINER) -f
 
+.PHONY: messaging-logs
+messaging-logs:
+	$(DC) -f $(MESSAGE_FILE) logs -f
+
 .PHONY : app-tests
 app-tests:
 	$(EXEC) $(APP_CONTAINER) pytest
+
+.PHONY: format
+format:
+	ruff format .

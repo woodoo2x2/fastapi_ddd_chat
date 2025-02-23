@@ -57,7 +57,6 @@ class MongoDBChatRepository(BaseChatRepository, BaseMongoDBRepository):
         )
 
 
-
 @dataclass
 class MongoDBMessageRepository(BaseMessageRepository, BaseMongoDBRepository):
     async def add_message(self, message: Message) -> None:
@@ -73,9 +72,7 @@ class MongoDBMessageRepository(BaseMessageRepository, BaseMongoDBRepository):
         find = {"chat_oid": chat_oid}
         cursor = self._collection.find(find).skip(filters.offset).limit(filters.limit)
 
-
-
-        messages =[
+        messages = [
             convert_message_document_to_entity(message_document=message_document)
             async for message_document in cursor
         ]
