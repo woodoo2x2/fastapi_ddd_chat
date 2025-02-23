@@ -9,11 +9,14 @@ from logic.exceptions.mediator import (
     EventHandlerNotRegisteredException,
     CommandHandlerNotRegisteredException,
 )
+from logic.mediator.command import CommandMediator
+from logic.mediator.event import EventMediator
+from logic.mediator.query import QueryMediator
 from logic.queries.base import BaseQuery, BaseQueryHandler, QT, QR
 
 
 @dataclass(eq=False)
-class Mediator:
+class Mediator(EventMediator, QueryMediator, CommandMediator):
     event_map: dict[ET, list[EventHandler]] = field(
         default_factory=lambda: defaultdict(list), kw_only=True
     )
@@ -28,7 +31,7 @@ class Mediator:
         self.event_map[event].append(event_handler)
 
     def register_command(
-        self, command: Type[CT], command_handler: [CommandHandler[CT, CR]]
+            self, command: Type[CT], command_handler: [CommandHandler[CT, CR]]
     ):
         self.command_map[command].extend(command_handler)
 

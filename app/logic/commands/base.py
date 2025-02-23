@@ -2,6 +2,8 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import TypeVar, Any, Generic
 
+from logic.mediator.event import EventMediator
+
 
 @dataclass(frozen=True)
 class BaseCommand(ABC):
@@ -24,6 +26,7 @@ CR = TypeVar("CR", bound=Any)
 
 @dataclass(frozen=True)
 class CommandHandler(ABC, Generic[CT, CR]):
+    _mediator: EventMediator
     """
     Базовый класс обработчика команд в паттерне CQRS.
 
