@@ -1,9 +1,11 @@
 from abc import ABC
 from dataclasses import dataclass
+from typing import Iterable
 
 from motor.core import AgnosticClient
 
 from domain.entities.messages import Chat, Message
+from infrastructure.repositories.filters.base import GetMessagesInfraFilter
 from infrastructure.repositories.messages.base import (
     BaseChatRepository,
     BaseMessageRepository,
@@ -12,6 +14,7 @@ from infrastructure.repositories.messages.converters import (
     convert_chat_entity_to_document,
     convert_chat_document_to_entity,
     convert_message_entity_to_document,
+    convert_message_document_to_entity,
 )
 
 
@@ -54,11 +57,29 @@ class MongoDBChatRepository(BaseChatRepository, BaseMongoDBRepository):
         )
 
 
+
 @dataclass
 class MongoDBMessageRepository(BaseMessageRepository, BaseMongoDBRepository):
-    async def add_message(self, chat_oid: str, message: Message) -> None:
+    async def add_message(self, message: Message) -> None:
         collection = self._collection
 
         await collection.insert_one(
             document=convert_message_entity_to_document(message)
         )
+
+    async def get_messages(
+        self, chat_oid: str, filters: GetMessagesInfraFilter
+    ) -> tuple[Iterable[Message], int]:
+        find = {"chat_oid": chat_oid}
+        cursor = self._collection.find(find).skip(filters.offset).limit(filters.limit)
+
+
+
+        messages =[
+            convert_message_document_to_entity(message_document=message_document)
+            async for message_document in cursor
+        ]
+
+        count = await self._collection.count_documents(find)
+
+        return messages, count

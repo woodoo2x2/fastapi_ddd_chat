@@ -1,7 +1,9 @@
 from datetime import datetime
+from typing import Self
 
 from pydantic import BaseModel
 
+from application.api.schemas import BaseQueryResponseSchema
 from domain.entities.messages import Chat, Message
 
 
@@ -41,6 +43,14 @@ class MessageDetailSchema(BaseModel):
     text: str
     created_at: datetime
 
+    @classmethod
+    def from_entity(cls, message: Message) -> Self:
+        return cls(
+            oid=message.oid,
+            text=message.text.as_generic_type(),
+            created_at=message.created_at
+        )
+
 
 class ChatDetailResponseSchema(BaseModel):
     oid: str
@@ -52,3 +62,7 @@ class ChatDetailResponseSchema(BaseModel):
         return ChatDetailResponseSchema(
             oid=chat.oid, title=chat.title.as_generic_type(), created_at=chat.created_at
         )
+
+
+class GetMessagesResponseSchema(BaseQueryResponseSchema):
+    items: list[MessageDetailSchema]
