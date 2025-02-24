@@ -19,7 +19,9 @@ from logic.exceptions.messages import (
 class NewChatCreatedEventHandler(EventHandler[NewChatCreatedEvent, None]):
     async def handle(self, event: NewChatCreatedEvent) -> NewChatCreatedEvent:
         await self.message_broker.send_message(
-            topic=self.broker_topic, value=convert_event_to_broker_message(event=event)
+            key=str(event.event_id).encode(),
+            topic=self.broker_topic,
+            value=convert_event_to_broker_message(event=event)
         )
 
         print(f"Обработка события {event.title}")
