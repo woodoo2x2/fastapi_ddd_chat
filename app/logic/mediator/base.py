@@ -6,10 +6,10 @@ from domain.events.base import BaseEvent
 from logic.commands.base import CommandHandler, CT, CR, BaseCommand
 from logic.events.base import EventHandler, ET, ER
 from logic.exceptions.mediator import (
-    EventHandlerNotRegisteredException,
     CommandHandlerNotRegisteredException,
 )
 from logic.mediator.command import CommandMediator
+
 from logic.mediator.event import EventMediator
 from logic.mediator.query import QueryMediator
 from logic.queries.base import BaseQuery, BaseQueryHandler, QT, QR
@@ -28,10 +28,10 @@ class Mediator(EventMediator, QueryMediator, CommandMediator):
     )
 
     def register_event(self, event: ET, event_handler: [EventHandler[ET, ER]]):
-        self.event_map[event].append(event_handler)
+        self.event_map[event].extend(event_handler)
 
     def register_command(
-            self, command: Type[CT], command_handler: [CommandHandler[CT, CR]]
+        self, command: Type[CT], command_handler: [CommandHandler[CT, CR]]
     ):
         self.command_map[command].extend(command_handler)
 
@@ -39,14 +39,17 @@ class Mediator(EventMediator, QueryMediator, CommandMediator):
         self.query_map[query] = query_handler
 
     async def publish(self, events: Iterable[BaseEvent]) -> Iterable[ER]:
-        event_type = events.__class__
-        handlers = self.event_map.get(events.__class__)
-
-        if not handlers:
-            raise EventHandlerNotRegisteredException(event_type)
         result = []
+
         for event in events:
+            handlers: Iterable[EventHandler] = self.event_map[event.__class__]
+
+            for handler in handlers:
+                result.append(await handler.handle(event=event))
+
             result.extend([await handler.handle(event) for handler in handlers])
+
+
         return result
 
     async def handle_command(self, command: BaseCommand) -> list[CR]:

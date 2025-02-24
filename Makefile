@@ -27,6 +27,7 @@ all:
 .PHONY : messaging-down
 messaging-down:
 	$(DC) -f $(MESSAGE_FILE) down
+
 .PHONY: app-down
 app-down:
 	$(DC) -f $(APP_FILE) down
