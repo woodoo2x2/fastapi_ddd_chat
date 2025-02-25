@@ -90,7 +90,9 @@ def _init_container() -> Container:
             producer=AIOKafkaProducer(bootstrap_servers=settings.KAFKA_URL),
         )
 
-    container.register(BaseMessageBroker, factory=create_message_broker, scope=Scope.singleton)
+    container.register(
+        BaseMessageBroker, factory=create_message_broker, scope=Scope.singleton
+    )
 
     def init_mediator() -> Mediator:
         mediator = Mediator()

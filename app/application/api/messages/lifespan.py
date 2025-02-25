@@ -2,7 +2,6 @@ from infrastructure.message_brokers.base import BaseMessageBroker
 from logic.dependency import init_container
 
 
-
 async def start_kafka():
     container = init_container()
     message_broker: BaseMessageBroker = container.resolve(BaseMessageBroker)

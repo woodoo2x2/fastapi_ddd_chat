@@ -21,7 +21,7 @@ class NewChatCreatedEventHandler(EventHandler[NewChatCreatedEvent, None]):
         await self.message_broker.send_message(
             key=str(event.event_id).encode(),
             topic=self.broker_topic,
-            value=convert_event_to_broker_message(event=event)
+            value=convert_event_to_broker_message(event=event),
         )
 
         print(f"Обработка события {event.title}")
