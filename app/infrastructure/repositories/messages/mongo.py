@@ -40,6 +40,7 @@ class MongoDBChatRepository(BaseChatRepository, BaseMongoDBRepository):
         )
         if not chat_document:
             return None
+
         return convert_chat_document_to_entity(chat_document)
 
     async def check_chat_exists_by_title(self, title: str) -> bool:

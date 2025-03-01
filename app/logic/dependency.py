@@ -4,7 +4,7 @@ from aiokafka import AIOKafkaProducer
 from motor.motor_asyncio import AsyncIOMotorClient
 from punq import Container, Scope
 
-from domain.events.messages import NewChatCreatedEvent
+from domain.events.messages import NewChatCreatedEvent, NewMessageReceivedEvent
 from infrastructure.message_brokers.base import BaseMessageBroker
 from infrastructure.message_brokers.kafka import KafkaMessageBroker
 from infrastructure.repositories.messages.base import (
@@ -21,7 +21,7 @@ from logic.commands.messages import (
     CreateMessageCommand,
     CreateMessageCommandHandler,
 )
-from logic.events.messages import NewChatCreatedEventHandler
+from logic.events.messages import NewChatCreatedEventHandler, NewMessageReceivedEventHandler
 from logic.mediator.base import Mediator
 from logic.mediator.event import EventMediator
 from logic.queries.messages import (
@@ -107,12 +107,19 @@ def _init_container() -> Container:
             chat_repository=container.resolve(BaseChatRepository),
             message_repository=container.resolve(BaseMessageRepository),
         )
+        #event handlers
 
         new_chat_created_event_handler = NewChatCreatedEventHandler(
             broker_topic=settings.NEW_CHAT_EVENTS_TOPIC,
             message_broker=container.resolve(BaseMessageBroker),
         )
 
+        new_message_received_event_handler = NewMessageReceivedEventHandler(
+            broker_topic=settings.NEW_MESSAGE_EVENTS_TOPIC,
+            message_broker=container.resolve(BaseMessageBroker),
+        )
+
+        mediator.register_event(NewMessageReceivedEvent, [new_message_received_event_handler])
         mediator.register_event(NewChatCreatedEvent, [new_chat_created_event_handler])
         mediator.register_command(
             CreateChatCommand,

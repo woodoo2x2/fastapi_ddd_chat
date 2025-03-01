@@ -55,3 +55,6 @@ class Chat(BaseEntity):
                 chat_oid=self.oid,
             )
         )
+
+
+

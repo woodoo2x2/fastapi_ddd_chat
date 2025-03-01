@@ -34,8 +34,4 @@ def convert_chat_document_to_entity(chat_document: Mapping[str, Any]) -> Chat:
         title=Title(chat_document.get("title")),
         created_at=chat_document.get("created_at"),
         oid=chat_document.get("oid"),
-        messages=[
-            convert_message_document_to_entity(document)
-            for document in chat_document.get("messages")
-        ],
     )
