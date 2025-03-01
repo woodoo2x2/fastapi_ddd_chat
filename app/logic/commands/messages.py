@@ -61,5 +61,4 @@ class CreateMessageCommandHandler(CommandHandler[CreateMessageCommand, Message])
 
         await self._mediator.publish(event)
 
-
         return message

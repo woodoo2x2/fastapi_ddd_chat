@@ -16,6 +16,7 @@ class NewChatCreatedEventHandler(EventHandler[NewChatCreatedEvent, None]):
 
         print(f"Обработка события {event.title}")
 
+
 @dataclass
 class NewMessageReceivedEventHandler(EventHandler[NewMessageReceivedEvent, None]):
     async def handle(self, event: NewMessageReceivedEvent) -> None:
